@@ -1,12 +1,9 @@
 from __future__ import annotations
 
 import json
-import re
-import uuid
 from dataclasses import dataclass
 
 from shared.billing import CostSession
-from shared.kb import all_articles_blob
 from shared.llm import ChatMessage, LlmClient
 from shared.tools import format_thread, get_order, get_ticket
 
@@ -20,10 +17,20 @@ class TicketResolution:
 
 
 def parse_resolution(text: str) -> TicketResolution:
-    m = re.search(r"\{[\s\S]*\}", text)
-    if not m:
-        raise ValueError(f"No JSON in model output:\n{text[:400]}")
-    data = json.loads(m.group())
+    decoder = json.JSONDecoder()
+    data = None
+    for index, char in enumerate(text):
+        if char != "{":
+            continue
+        try:
+            candidate, _ = decoder.raw_decode(text[index:])
+        except json.JSONDecodeError:
+            continue
+        if isinstance(candidate, dict) and {"action", "kb_article"} <= candidate.keys():
+            data = candidate
+            break
+    if data is None:
+        raise ValueError(f"No resolution JSON in model output:\n{text[:400]}")
     return TicketResolution(
         action=str(data["action"]).upper(),
         kb_article=str(data["kb_article"]),
@@ -32,19 +39,19 @@ def parse_resolution(text: str) -> TicketResolution:
     )
 
 
-_FEW_SHOT = """
-Example ticket resolutions (format to copy):
-
-1. Unopened headphones, day 10 → {"action":"REFUND","kb_article":"returns-within-30-days"}
-2. Ebook, license shown → {"action":"SEND_ARTICLE","kb_article":"digital-license-no-refund"}
-3. Cracked custom mug → {"action":"ESCALATE_TIER2","kb_article":"custom-items-no-replace"}
-4. Cracked stock mug, day 2 → {"action":"REPLACE","kb_article":"damage-replacement-7-days"}
-"""
+_POLICY = """Choose one action and its exact article id:
+- subscription: age<=30 REFUND, otherwise SEND_ARTICLE; subscription-cooling-off
+- revealed digital license: SEND_ARTICLE; digital-license-no-refund
+- damaged+customized: ESCALATE_TIER2; custom-items-no-replace
+- damaged+not customized+delivered<=7d: REPLACE; damage-replacement-7-days
+- physical+unopened+delivered<=30d: REFUND; returns-within-30-days
+- otherwise: ESCALATE_TIER2; returns-within-30-days
+Return JSON only: action, kb_article, customer_reply. Keep the reply to one sentence."""
 
 
 class SupportCopilot:
     """
-    ShopAssist Tier-1 copilot (baseline).
+    Cost-aware ShopAssist Tier-1 copilot.
 
     Given a support ticket + order snapshot, choose an action, cite the help-center
     article, and draft the customer reply.
@@ -58,29 +65,13 @@ class SupportCopilot:
         ticket = get_ticket(ticket_id)
         order = get_order(ticket["order_id"])
         thread = format_thread(ticket)
-        snapshot = json.dumps(order, indent=2)
-
-        system = "\n\n".join(
-            [
-                f"Run id {uuid.uuid4()}",
-                "You are ShopAssist, the Tier-1 customer support copilot.",
-                _FEW_SHOT,
-                "HELP CENTER:",
-                all_articles_blob(),
-                (
-                    "Instructions: Think step by step. Write full reasoning, quote any article "
-                    "you rely on, then output JSON with action, kb_article, customer_reply."
-                ),
-            ]
+        # Compact JSON preserves every order fact while avoiding whitespace tokens.
+        snapshot = json.dumps(order, separators=(",", ":"))
+        user = (
+            f"TICKET {ticket_id}\n{thread}\n"
+            f"ORDER_SNAPSHOT:{snapshot} END_SNAPSHOT"
         )
-        user = "\n\n".join(
-            [
-                f"TICKET_ID: {ticket_id}",
-                f"THREAD:\n{thread}",
-                f"ORDER_SNAPSHOT:\n{snapshot}\nEND_SNAPSHOT",
-            ]
-        )
-        return [ChatMessage("system", system), ChatMessage("user", user)]
+        return [ChatMessage("system", _POLICY), ChatMessage("user", user)]
 
     def handle_ticket(self, ticket_id: str) -> TicketResolution:
         messages = self.build_messages(ticket_id)

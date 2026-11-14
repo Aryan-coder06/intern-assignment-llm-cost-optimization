@@ -17,8 +17,27 @@ def main() -> None:
     pipe = SupportPipeline()
     rows = []
     for tid in PUBLIC:
+        call_start = len(pipe.session.calls)
         res = pipe.handle_ticket(tid)
-        rows.append({"ticket_id": tid, "action": res.action, "kb_article": res.kb_article})
+        calls = pipe.session.calls[call_start:]
+        rows.append(
+            {
+                "ticket_id": tid,
+                "action": res.action,
+                "kb_article": res.kb_article,
+                "calls": [
+                    {
+                        "label": call.label,
+                        "input_tokens": call.input_tokens,
+                        "cached_input_tokens": call.cached_prefix_tokens,
+                        "output_tokens": call.output_tokens,
+                        "points": call.points(),
+                    }
+                    for call in calls
+                ],
+                "ticket_points": sum(call.points() for call in calls),
+            }
+        )
     print(json.dumps({"resolutions": rows, "total_points": pipe.session.total_points()}, indent=2))
 
 

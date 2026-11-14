@@ -17,12 +17,25 @@ def main() -> None:
     copilot = SupportCopilot()
     rows = []
     for tid in PUBLIC:
+        call_start = len(copilot.session.calls)
         res = copilot.handle_ticket(tid)
+        calls = copilot.session.calls[call_start:]
         rows.append(
             {
                 "ticket_id": tid,
                 "action": res.action,
                 "kb_article": res.kb_article,
+                "calls": [
+                    {
+                        "label": call.label,
+                        "input_tokens": call.input_tokens,
+                        "cached_input_tokens": call.cached_prefix_tokens,
+                        "output_tokens": call.output_tokens,
+                        "points": call.points(),
+                    }
+                    for call in calls
+                ],
+                "ticket_points": sum(call.points() for call in calls),
             }
         )
     print(
