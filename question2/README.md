@@ -18,7 +18,8 @@ from generation uses an LLM:
 2. **Retrieve** reads only those articles, never the 200k-token expanded blob.
 3. **Compose** makes one small LLM call with the thread, compact order, and evidence.
 4. **Audit** parses the JSON and rejects unknown actions, unknown articles, or a
-   citation that was not retrieved.
+   citation that was not retrieved, and action/article pairs that conflict with
+   the order's eligibility. Conflicting drafts raise for manual review by the caller.
 
 This uses deterministic code for routing, lookup, and validation rather than
 paying a model to copy context between nodes. It also prevents a hallucinated

@@ -31,6 +31,11 @@ def parse_resolution(text: str) -> TicketResolution:
             break
     if data is None:
         raise ValueError(f"No resolution JSON in model output:\n{text[:400]}")
+    if any(not isinstance(data[key], str) or not data[key].strip()
+           for key in ("action", "kb_article")):
+        raise ValueError("Resolution action and kb_article must be nonempty strings")
+    if not isinstance(data.get("customer_reply", ""), str):
+        raise ValueError("Resolution customer_reply must be a string")
     return TicketResolution(
         action=str(data["action"]).upper(),
         kb_article=str(data["kb_article"]),

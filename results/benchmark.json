@@ -1,0 +1,442 @@
+{
+  "baseline_commit": "d9989e2",
+  "tokenizer": "cl100k_base",
+  "mode": "fresh session per ticket; local simulator",
+  "results": [
+    {
+      "track": "question1",
+      "ticket": "T-1001",
+      "baseline": {
+        "action": "REFUND",
+        "kb_article": "returns-within-30-days",
+        "points": 8892,
+        "calls": [
+          {
+            "label": "handle_ticket",
+            "input_tokens": 524,
+            "cached_input_tokens": 0,
+            "output_tokens": 488,
+            "points": 8892
+          }
+        ]
+      },
+      "optimized": {
+        "action": "REFUND",
+        "kb_article": "returns-within-30-days",
+        "points": 1464,
+        "calls": [
+          {
+            "label": "handle_ticket",
+            "input_tokens": 258,
+            "cached_input_tokens": 0,
+            "output_tokens": 46,
+            "points": 1464
+          }
+        ]
+      },
+      "reduction_percent": 83.54
+    },
+    {
+      "track": "question1",
+      "ticket": "T-1002",
+      "baseline": {
+        "action": "SEND_ARTICLE",
+        "kb_article": "digital-license-no-refund",
+        "points": 8757,
+        "calls": [
+          {
+            "label": "handle_ticket",
+            "input_tokens": 519,
+            "cached_input_tokens": 0,
+            "output_tokens": 480,
+            "points": 8757
+          }
+        ]
+      },
+      "optimized": {
+        "action": "SEND_ARTICLE",
+        "kb_article": "digital-license-no-refund",
+        "points": 1341,
+        "calls": [
+          {
+            "label": "handle_ticket",
+            "input_tokens": 252,
+            "cached_input_tokens": 0,
+            "output_tokens": 39,
+            "points": 1341
+          }
+        ]
+      },
+      "reduction_percent": 84.69
+    },
+    {
+      "track": "question1",
+      "ticket": "T-1003",
+      "baseline": {
+        "action": "ESCALATE_TIER2",
+        "kb_article": "custom-items-no-replace",
+        "points": 8916,
+        "calls": [
+          {
+            "label": "handle_ticket",
+            "input_tokens": 502,
+            "cached_input_tokens": 0,
+            "output_tokens": 494,
+            "points": 8916
+          }
+        ]
+      },
+      "optimized": {
+        "action": "ESCALATE_TIER2",
+        "kb_article": "custom-items-no-replace",
+        "points": 1302,
+        "calls": [
+          {
+            "label": "handle_ticket",
+            "input_tokens": 239,
+            "cached_input_tokens": 0,
+            "output_tokens": 39,
+            "points": 1302
+          }
+        ]
+      },
+      "reduction_percent": 85.4
+    },
+    {
+      "track": "question1",
+      "ticket": "T-1004",
+      "baseline": {
+        "action": "REPLACE",
+        "kb_article": "damage-replacement-7-days",
+        "points": 8919,
+        "calls": [
+          {
+            "label": "handle_ticket",
+            "input_tokens": 508,
+            "cached_input_tokens": 0,
+            "output_tokens": 493,
+            "points": 8919
+          }
+        ]
+      },
+      "optimized": {
+        "action": "REPLACE",
+        "kb_article": "damage-replacement-7-days",
+        "points": 1263,
+        "calls": [
+          {
+            "label": "handle_ticket",
+            "input_tokens": 241,
+            "cached_input_tokens": 0,
+            "output_tokens": 36,
+            "points": 1263
+          }
+        ]
+      },
+      "reduction_percent": 85.84
+    },
+    {
+      "track": "question1",
+      "ticket": "T-1091",
+      "baseline": {
+        "action": "SEND_ARTICLE",
+        "kb_article": "subscription-cooling-off",
+        "points": 8952,
+        "calls": [
+          {
+            "label": "handle_ticket",
+            "input_tokens": 514,
+            "cached_input_tokens": 0,
+            "output_tokens": 494,
+            "points": 8952
+          }
+        ]
+      },
+      "optimized": {
+        "action": "SEND_ARTICLE",
+        "kb_article": "subscription-cooling-off",
+        "points": 1305,
+        "calls": [
+          {
+            "label": "handle_ticket",
+            "input_tokens": 245,
+            "cached_input_tokens": 0,
+            "output_tokens": 38,
+            "points": 1305
+          }
+        ]
+      },
+      "reduction_percent": 85.42
+    },
+    {
+      "track": "question2",
+      "ticket": "T-1001",
+      "baseline": {
+        "action": "REFUND",
+        "kb_article": "returns-within-30-days",
+        "points": 73449,
+        "calls": [
+          {
+            "label": "triage",
+            "input_tokens": 8454,
+            "cached_input_tokens": 0,
+            "output_tokens": 489,
+            "points": 32697
+          },
+          {
+            "label": "retrieve",
+            "input_tokens": 597,
+            "cached_input_tokens": 0,
+            "output_tokens": 46,
+            "points": 2481
+          },
+          {
+            "label": "compose",
+            "input_tokens": 1195,
+            "cached_input_tokens": 0,
+            "output_tokens": 485,
+            "points": 10860
+          },
+          {
+            "label": "audit",
+            "input_tokens": 6717,
+            "cached_input_tokens": 0,
+            "output_tokens": 484,
+            "points": 27411
+          }
+        ]
+      },
+      "optimized": {
+        "action": "REFUND",
+        "kb_article": "returns-within-30-days",
+        "points": 1311,
+        "calls": [
+          {
+            "label": "compose",
+            "input_tokens": 207,
+            "cached_input_tokens": 0,
+            "output_tokens": 46,
+            "points": 1311
+          }
+        ]
+      },
+      "reduction_percent": 98.22
+    },
+    {
+      "track": "question2",
+      "ticket": "T-1002",
+      "baseline": {
+        "action": "SEND_ARTICLE",
+        "kb_article": "digital-license-no-refund",
+        "points": 73293,
+        "calls": [
+          {
+            "label": "triage",
+            "input_tokens": 8450,
+            "cached_input_tokens": 0,
+            "output_tokens": 495,
+            "points": 32775
+          },
+          {
+            "label": "retrieve",
+            "input_tokens": 606,
+            "cached_input_tokens": 0,
+            "output_tokens": 39,
+            "points": 2403
+          },
+          {
+            "label": "compose",
+            "input_tokens": 1194,
+            "cached_input_tokens": 0,
+            "output_tokens": 481,
+            "points": 10797
+          },
+          {
+            "label": "audit",
+            "input_tokens": 6706,
+            "cached_input_tokens": 0,
+            "output_tokens": 480,
+            "points": 27318
+          }
+        ]
+      },
+      "optimized": {
+        "action": "SEND_ARTICLE",
+        "kb_article": "digital-license-no-refund",
+        "points": 1275,
+        "calls": [
+          {
+            "label": "compose",
+            "input_tokens": 230,
+            "cached_input_tokens": 0,
+            "output_tokens": 39,
+            "points": 1275
+          }
+        ]
+      },
+      "reduction_percent": 98.26
+    },
+    {
+      "track": "question2",
+      "ticket": "T-1003",
+      "baseline": {
+        "action": "ESCALATE_TIER2",
+        "kb_article": "custom-items-no-replace",
+        "points": 73593,
+        "calls": [
+          {
+            "label": "triage",
+            "input_tokens": 8434,
+            "cached_input_tokens": 0,
+            "output_tokens": 495,
+            "points": 32727
+          },
+          {
+            "label": "retrieve",
+            "input_tokens": 605,
+            "cached_input_tokens": 0,
+            "output_tokens": 39,
+            "points": 2400
+          },
+          {
+            "label": "compose",
+            "input_tokens": 1181,
+            "cached_input_tokens": 0,
+            "output_tokens": 494,
+            "points": 10953
+          },
+          {
+            "label": "audit",
+            "input_tokens": 6706,
+            "cached_input_tokens": 0,
+            "output_tokens": 493,
+            "points": 27513
+          }
+        ]
+      },
+      "optimized": {
+        "action": "ESCALATE_TIER2",
+        "kb_article": "custom-items-no-replace",
+        "points": 1236,
+        "calls": [
+          {
+            "label": "compose",
+            "input_tokens": 217,
+            "cached_input_tokens": 0,
+            "output_tokens": 39,
+            "points": 1236
+          }
+        ]
+      },
+      "reduction_percent": 98.32
+    },
+    {
+      "track": "question2",
+      "ticket": "T-1004",
+      "baseline": {
+        "action": "REPLACE",
+        "kb_article": "damage-replacement-7-days",
+        "points": 73539,
+        "calls": [
+          {
+            "label": "triage",
+            "input_tokens": 8440,
+            "cached_input_tokens": 0,
+            "output_tokens": 493,
+            "points": 32715
+          },
+          {
+            "label": "retrieve",
+            "input_tokens": 603,
+            "cached_input_tokens": 0,
+            "output_tokens": 36,
+            "points": 2349
+          },
+          {
+            "label": "compose",
+            "input_tokens": 1176,
+            "cached_input_tokens": 0,
+            "output_tokens": 495,
+            "points": 10953
+          },
+          {
+            "label": "audit",
+            "input_tokens": 6704,
+            "cached_input_tokens": 0,
+            "output_tokens": 494,
+            "points": 27522
+          }
+        ]
+      },
+      "optimized": {
+        "action": "REPLACE",
+        "kb_article": "damage-replacement-7-days",
+        "points": 1197,
+        "calls": [
+          {
+            "label": "compose",
+            "input_tokens": 219,
+            "cached_input_tokens": 0,
+            "output_tokens": 36,
+            "points": 1197
+          }
+        ]
+      },
+      "reduction_percent": 98.37
+    },
+    {
+      "track": "question2",
+      "ticket": "T-1091",
+      "baseline": {
+        "action": "SEND_ARTICLE",
+        "kb_article": "subscription-cooling-off",
+        "points": 73581,
+        "calls": [
+          {
+            "label": "triage",
+            "input_tokens": 8448,
+            "cached_input_tokens": 0,
+            "output_tokens": 489,
+            "points": 32679
+          },
+          {
+            "label": "retrieve",
+            "input_tokens": 608,
+            "cached_input_tokens": 0,
+            "output_tokens": 38,
+            "points": 2394
+          },
+          {
+            "label": "compose",
+            "input_tokens": 1177,
+            "cached_input_tokens": 0,
+            "output_tokens": 495,
+            "points": 10956
+          },
+          {
+            "label": "audit",
+            "input_tokens": 6709,
+            "cached_input_tokens": 0,
+            "output_tokens": 495,
+            "points": 27552
+          }
+        ]
+      },
+      "optimized": {
+        "action": "SEND_ARTICLE",
+        "kb_article": "subscription-cooling-off",
+        "points": 1260,
+        "calls": [
+          {
+            "label": "compose",
+            "input_tokens": 230,
+            "cached_input_tokens": 0,
+            "output_tokens": 38,
+            "points": 1260
+          }
+        ]
+      },
+      "reduction_percent": 98.29
+    }
+  ]
+}

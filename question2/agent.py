@@ -45,7 +45,7 @@ class SupportPipeline:
         triage = self._triage(thread, order)
         articles = self._retrieve(triage)
         draft = self._compose(ticket_id, thread, order, triage, articles)
-        return self._audit(draft, articles)
+        return self._audit(draft, articles, order)
 
     def _triage(self, thread: str, order: dict) -> TriageResult:
         """Extract intent and shortlist article ids without a model call."""
@@ -103,8 +103,12 @@ class SupportPipeline:
         ]
         return self.llm.chat("compose", messages)
 
-    def _audit(self, draft: str, articles: dict[str, str]) -> TicketResolution:
-        """Reject malformed or unsupported model output without another LLM call."""
+    def _audit(self, draft: str, articles: dict[str, str], order: dict) -> TicketResolution:
+        """Validate schema, grounding, and policy eligibility without another call.
+
+        Fail closed: a contradictory draft raises rather than silently approving
+        a financial action. The caller can route that failure to human review.
+        """
         parsed = parse_resolution(draft)
         if parsed.action not in _ACTIONS:
             raise ValueError(f"Unsupported action: {parsed.action}")
@@ -112,4 +116,25 @@ class SupportPipeline:
             raise ValueError(
                 f"Article {parsed.kb_article!r} was not retrieved for this ticket"
             )
+        # Ordered policy checks are independent of the generated draft. Overlapping
+        # categories must respect subscription/license/custom exceptions first.
+        if order.get("product_type") == "subscription":
+            expected = (
+                "REFUND" if int(order.get("subscription_age_days", 0)) <= 30
+                else "SEND_ARTICLE", "subscription-cooling-off"
+            )
+        elif order.get("license_revealed"):
+            expected = ("SEND_ARTICLE", "digital-license-no-refund")
+        elif order.get("customized") and order.get("damage_reported"):
+            expected = ("ESCALATE_TIER2", "custom-items-no-replace")
+        elif (order.get("damage_reported") and not order.get("customized")
+              and int(order.get("delivered_days_ago", 99)) <= 7):
+            expected = ("REPLACE", "damage-replacement-7-days")
+        elif (order.get("product_type") == "physical" and not order.get("opened")
+              and int(order.get("delivered_days_ago", 99)) <= 30):
+            expected = ("REFUND", "returns-within-30-days")
+        else:
+            expected = ("ESCALATE_TIER2", "returns-within-30-days")
+        if (parsed.action, parsed.kb_article) != expected:
+            raise ValueError("Draft conflicts with order eligibility; manual review required")
         return TicketResolution(parsed.action, parsed.kb_article)

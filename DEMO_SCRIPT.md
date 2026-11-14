@@ -38,9 +38,10 @@ Open `question2/agent.py` and follow `handle_ticket` through its four calls.
 where generation adds value. Triage extracts intent and candidate article IDs
 from trusted order facts. Retrieve loads only those articles from disk, instead
 of passing a 200,000-token help center. Compose makes one focused model call.
-Audit is deterministic: it validates the action and rejects any citation that
-was not retrieved. This reduces cost and also gives stronger hallucination
-protection than asking another model to audit itself."
+Audit is deterministic: it validates schema, the allowed action, the retrieved
+citation, and order eligibility. If a draft conflicts with policy, it raises for
+the caller to route to manual review. None of these checks requires another
+model call."
 
 Run:
 
@@ -49,7 +50,7 @@ python question2/run.py
 ```
 
 Highlight T-1001 at 1,311 points and T-1002 at 1,275 points, both below the
-2,500-point target.
+2,500-point target. These are simulator billing points, not currency amounts.
 
 ## 2:40–3:20 — Tests and edge case
 
@@ -60,9 +61,13 @@ pytest -q
 ```
 
 "The suite checks all public decisions, the 200,000-token knowledge-base setup,
-both cost targets, and the T-1091 subscription holdout. I retained the holdout
+both cost targets, boundary ages, malformed responses, incorrect drafts, and the
+T-1091 subscription holdout. I retained the holdout
 behavior: a day-38 subscription cancellation sends the cooling-off article
-instead of issuing an automatic refund."
+instead of issuing an automatic refund. The provided LLM is a local simulator,
+so these tests don't measure a hosted model's semantic accuracy. Before a real
+deployment I would evaluate retrieval recall, structured output reliability, and
+adversarial customer text on unseen tickets."
 
 ## 3:20–3:40 — Close
 
